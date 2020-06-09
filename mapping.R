@@ -5,6 +5,8 @@ library(leaflet)
 library(ggplot2)
 library(RColorBrewer)
 
+source("monthly BLS data.R")
+
 us_states <- unique(fips_codes$state)[1:51]
 continental_states <- us_states[!us_states %in% c("AK", "HI")]
 us_counties <- rbind_tigris(
@@ -62,7 +64,7 @@ leaflet() %>%
   addProviderTiles("CartoDB.Positron") %>%
   addPolygons(data = counties,
               fillColor = ~covid.pal(demp.covid), 
-              fillOpacity = 0.8, 
+              fillOpacity = 1, 
               color = "#BDBDC3", 
               weight = 1,
               popup = county_popup,
@@ -76,7 +78,7 @@ leaflet() %>%
               group = "Great Recession") %>%
   addPolygons(data = counties,
               fillColor = ~recession.pal(demp.2007.2019), 
-              fillOpacity = 0.3, 
+              fillOpacity = 0.5, 
               color = "#BDBDC3", 
               weight = 1,
               popup = county_popup,
@@ -100,9 +102,9 @@ leaflet() %>%
               weight = 1,
               group = "Hide recovering") %>%
   addLegend(values = counties$demp.covid, group = "COVID Impact", 
-            position = "bottomright", pal =covid.pal) %>%
+            position = "bottomright", pal =covid.pal,  opacity = 1) %>%
   addLegend(values = recession.bins, group = "Great Recession",
-            position = "bottomleft", pal = recession.pal) %>%
+            position = "bottomleft", pal = recession.pal,  opacity = 1) %>%
   addLayersControl(
     baseGroups = c("COVID Impact", "Great Recession"),
     overlayGroups = c("Overlay Great Recession", "Hide metro", "Hide recovered", "Hide recovering"),

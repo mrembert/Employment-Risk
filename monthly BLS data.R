@@ -39,6 +39,20 @@ amenity <- tbl(coririsi, in_schema("sch_layer", "natural_amenity_score_county"))
   rename(amenity = natural_amenity_scale) %>%
   select(fips, amenity) 
 
+black2010 <- tbl(coririsi, in_schema("sch_source", "ers_people")) %>% 
+  collect() %>%
+  mutate(fips = as.numeric(FIPS)) %>%
+  rename(black2010 = BlackNonHispanicPct2010) %>%
+  select(fips, black2010) 
+
+hispanic2010 <- tbl(coririsi, in_schema("sch_source", "ers_people")) %>% 
+  collect() %>%
+  mutate(fips = as.numeric(FIPS)) %>%
+  rename(hispanic2010 = HispanicPct2010) %>%
+  select(fips, hispanic2010) 
+
+
+
 emp.2007 <- read.csv("2007 emp.csv")
 metro <- read.csv("metro.csv")
 broadband_sub <- read.csv("broadband_sub.csv")
@@ -69,7 +83,9 @@ df_emp <- df_emp %>% left_join(metro, "fips")%>%
   left_join(broadband, "fips") %>%
   left_join(prop, "fips") %>%
   left_join(young_firm, "fips") %>%
-  left_join(amenity, "fips")
+  left_join(amenity, "fips") %>%
+  left_join(black2010, "fips") %>%
+  left_join(hispanic2010, "fips")
 
 df_emp <- df_emp %>% left_join(emp.2007, "fips") %>% 
   mutate(demp.2007.2019 = (emp.2019 - emp.2007)/emp.2007)
@@ -90,6 +106,8 @@ recovery_compare <- df_analysis %>%
     recession = mean(demp.2007.2019),
     covid = mean(demp.covid),
     recession.covid = mean(demp.2007.Apr20),
+    black2010 = mean(black2010),
+    hispanic2010 = mean(hispanic2010),
     bach2010 = mean(bach2010_share),
     bach2018 = mean(bach2018_share),
     dbach = mean(dbach),
@@ -107,6 +125,8 @@ recovery_compare_nometro <- df_analysis %>%
     recession = mean(demp.2007.2019),
     covid = mean(demp.covid),
     recession.covid = mean(demp.2007.Apr20),
+    black2010 = mean(black2010),
+    hispanic2010 = mean(hispanic2010),
     bach2010 = mean(bach2010_share),
     bach2018 = mean(bach2018_share),
     dbach = mean(dbach),
@@ -125,6 +145,8 @@ recovery_compare_alt <- df_analysis %>%
     covid = (sum(emp.Apr2020) - sum(emp.Feb2020))/sum(emp.Feb2020),
     recession.covid = (sum(emp.Apr2020) - sum(emp.2007))/sum(emp.2007),
     bach2010 = mean(bach2010_share),
+    black2010 = mean(black2010),
+    hispanic2010 = mean(hispanic2010),
     bach2018 = mean(bach2018_share),
     dbach = (sum(bach2018) - sum(bach2010))/sum(bach2010),
     broadband_sub = mean(broadband_sub),
@@ -141,6 +163,8 @@ recovery_compare_alt_nometro <- df_analysis %>%
     recession = (sum(emp.2019) - sum(emp.2007))/sum(emp.2007),
     covid = (sum(emp.Apr2020) - sum(emp.Feb2020))/sum(emp.Feb2020),
     recession.covid = (sum(emp.Apr2020) - sum(emp.2007))/sum(emp.2007),
+    black2010 = mean(black2010),
+    hispanic2010 = mean(hispanic2010),
     bach2010 = mean(bach2010_share),
     bach2018 = mean(bach2018_share),
     dbach = (sum(bach2018) - sum(bach2010))/sum(bach2010),
