@@ -85,6 +85,12 @@ df_emp<- df %>% select(fips, area_title, period, employed) %>%
   mutate (demp.covid = (emp.Apr2020 - emp.Feb2020)/emp.Feb2020) %>%
   select(fips, area_title, emp.Feb2020, emp.Apr2020, demp.covid)
 
+ue <- df %>% select(fips, period, unemployed_rate) %>%
+  pivot_wider(names_from =  period, values_from = unemployed_rate, names_prefix = "ue.") %>%
+  select(fips, ue.Apr2020)
+
+df_emp <- df_emp %>% left_join(ue, "fips")
+
 df_emp <- df_emp %>% left_join(metro, "fips")%>% 
   left_join(broadband_sub, "fips")%>% 
   left_join(bach2010, "fips") %>% 
@@ -111,8 +117,10 @@ df_emp$recovered[df_emp$demp.2007.2019>=0] <- 1
 df_emp$high_black <- 0
 df_emp$high_black[df_emp$black2010>12.5] <-1
 
-df_analysis <- df_emp %>% filter(!is.na(amenity), !is.na(bach2018), !is.na(bach2010), !is.na(emp.2007), !is.na(emp.Apr2020), !is.na(broadband))
 
+########################### Summary Stats ###############
+
+df_analysis <- df_emp %>% filter(!is.na(amenity), !is.na(bach2018), !is.na(bach2010), !is.na(emp.2007), !is.na(emp.Apr2020), !is.na(broadband))
 
 recovery_compare <- df_analysis %>%
   group_by(metro, recovered) %>%

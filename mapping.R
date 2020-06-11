@@ -70,6 +70,11 @@ county_popup <- paste0("<br><strong>County: </strong>",
                      
 )
 
+
+counties <- gSimplify(spgeom = counties, tol=0.01, topologyPreserve=TRUE) %>%
+  SpatialPolygonsDataFrame(., data = counties@data)
+
+
 leaflet() %>%
   addProviderTiles("CartoDB.Positron") %>%
   addPolygons(data = counties,
@@ -118,11 +123,11 @@ leaflet() %>%
               color = "#000000", 
               weight = 1,
               group = "Hide recovering") %>%
-  addLegend(values = counties$demp.covid, group = "COVID Impact", 
+  addLegend(values = counties$demp.covid, group = "COVID Impact", title = "Change in Emp Feb20 to Apr20",
             position = "bottomright", pal =covid.pal,  opacity = 1) %>%
-  addLegend(values = recession.bins, group = "Great Recession",
+  addLegend(values = recession.bins, group = "Great Recession", title = "Change in Emp 2007 - 2019",
             position = "bottomleft", pal = recession.pal,  opacity = 1) %>%
-  addLegend(values = ue.bins, group = "Unemployment rate",
+  addLegend(values = ue.bins, group = "Unemployment rate", title = "Unemployment rate Apr20",
             position = "bottomleft", pal = ue.pal,  opacity = 1) %>%
   addLayersControl(
     baseGroups = c("Unemployment Rate","COVID Employment Impact", "Great Recession" ),
