@@ -125,7 +125,7 @@ leaflet() %>%
   addLegend(values = ue.bins, group = "Unemployment rate",
             position = "bottomleft", pal = ue.pal,  opacity = 1) %>%
   addLayersControl(
-    baseGroups = c("Unemployment rate","COVID Employment Impact", "Great Recession" ),
+    baseGroups = c("Unemployment Rate","COVID Employment Impact", "Great Recession" ),
     overlayGroups = c("Overlay Great Recession", "Hide metro", "Hide recovered", "Hide recovering"),
     options = layersControlOptions(collapsed = FALSE) ) %>% 
   hideGroup(c("Overlay Great Recession","Hide metro", "Hide recovered", "Hide recovering")) 
