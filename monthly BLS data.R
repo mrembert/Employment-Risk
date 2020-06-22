@@ -11,26 +11,19 @@ require(dbplyr)
 require(config)
 source("../base/connections/coririsi.R")
 
+source("../base/functions/write_layer.R")
+
 prop <- tbl(coririsi, in_schema("sch_layer", "bea_caemp25n_county_01_18")) %>% 
-  collect() %>% select(geoid,year, prop_emp, total_emp) %>% 
+  collect() %>% 
+  select(geoid, geoid_st, year, prop_emp, total_emp) %>% 
   filter(year == 2007 | year == 2018) %>%
   gather("var", "emp", prop_emp, total_emp) %>%
   unite(temp, var, year) %>%
   spread(temp, emp) %>%
   mutate(dprop07_18 = (prop_emp_2018 - prop_emp_2007)/prop_emp_2007) %>%
+  mutate(prop_share_18 = prop_emp_2018/total_emp_2018) %>%
   mutate(fips = as.numeric(geoid)) %>%
-  select(fips,dprop07_18, prop_emp_2007, prop_emp_2018) 
-
-pop <- tbl(coririsi, in_schema("sch_layer", "bea_cainc4_county_69_18")) %>% 
-  collect() %>% 
-  select(geoid,year, pop) %>% 
-  filter(year == 2007 | year == 2018) %>%
-  gather("var", "pop", pop) %>%
-  unite(temp, var, year) %>%
-  spread(temp, pop) %>%
-  mutate(dpop07_18 = (pop_2018 - pop_2007)/pop_2007) %>%
-  mutate(fips = as.numeric(geoid)) %>%
-  select(fips, dpop07_18, pop_2007, pop_2018) 
+  select(fips, geoid_st, dprop07_18, prop_emp_2007, prop_emp_2018 , prop_share_18) 
  
 
 broadband <- tbl(coririsi, in_schema("sch_analysis", "la_counties_broadband")) %>% 

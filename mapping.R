@@ -27,6 +27,8 @@ df.emp$recovered <- as.factor(df.emp$recovered)
 df.emp$ue.Apr2020 <- as.numeric(df.emp$ue.Apr2020)
 us_counties$GEOID <- as.numeric(us_counties$GEOID)
 
+write.csv(df_emp, "employment-risk-06152019.csv")
+
 counties <- geo_join(us_counties, df.emp, by = "GEOID")
 
 metro <- df.emp %>% filter(metro==1) %>% select(GEOID,metro)
@@ -74,6 +76,9 @@ county_popup <- paste0("<br><strong>County: </strong>",
 counties <- gSimplify(spgeom = counties, tol=0.01, topologyPreserve=TRUE) %>%
   SpatialPolygonsDataFrame(., data = counties@data)
 
+employment_map <- counties %>% st_as_sf()
+
+write_layer(employment_map, "employment_map_06152020", ngacarto = TRUE)
 
 leaflet() %>%
   addProviderTiles("CartoDB.Positron") %>%
